@@ -1,0 +1,156 @@
+openapi: 3.0.4
+
+info:
+  version: v2020-07-21
+  title: LM Logs API
+
+servers:
+  - url: https://{company}.logicmonitor.com/rest
+    variables:
+      company:
+        default: 'api'
+
+security:
+  - LMv1: []
+
+paths:
+  /log/ingest:
+    post:
+      tags:
+        - logIngest
+      description: Send custom logs to your LogicMonitor account.
+      parameters: 
+        - $ref: '#/components/parameters/version'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/logRequest'
+      responses:
+        '202':
+          description: The request has been accepted for processing, but the processing has not been completed.
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logResponse'
+        '401':
+          description: TAuthentication failed. The API key provided in not valid.
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logResponse'
+        '402':
+          description: The account is not registered as a customer.
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logResponse'
+        '403':
+          description: The API key doesn’t have permissions to perform the request.
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logResponse'
+        '413':
+          description: The maximum content size per payload is 8 MB.
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logResponse'
+        '422':
+          description: The request cannot be processed.
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logResponse'
+        '429':
+          description: The number of requests exceeds the rate limit.
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logResponse'
+        '500':
+          description: Something went wrong on LogicMonitor’s end.
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/logResponse'
+
+components:
+  securitySchemes:
+    LMv1:
+      type: apiKey
+      in: header
+      name: Authorization
+
+  parameters:
+    version:
+      name: X-Version
+      in: header
+      required: true
+      schema:
+        type: integer
+        enum: [2]
+
+  schemas:
+    logEntry:
+      type: object
+      properties:
+        message:
+          type: string
+        timestamp:
+          type: string
+        _lm.resourceId:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - message
+        - _lm.resourceId
+
+    logRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/logEntry'
+
+    logResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
