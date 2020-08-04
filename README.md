@@ -1,4 +1,4 @@
-# lm-logs-sdk-java
+# lm-logs-sdk-java(beta)
 
 Logic Monitor Log Ingestion Java SDK.
 
