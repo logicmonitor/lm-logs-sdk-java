@@ -1,7 +1,7 @@
 openapi: 3.0.4
 
 info:
-  version: v2020-07-21
+  version: "1.1"
   title: LM Logs API
 
 servers:
@@ -29,85 +29,21 @@ paths:
               $ref: '#/components/schemas/logRequest'
       responses:
         '202':
-          description: The request has been accepted for processing, but the processing has not been completed.
-          headers:
-            X-Request-ID:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logResponse'
+          $ref: '#/components/responses/accepted'
         '401':
-          description: TAuthentication failed. The API key provided in not valid.
-          headers:
-            X-Request-ID:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logResponse'
+          $ref: '#/components/responses/unauthorized'
         '402':
-          description: The account is not registered as a customer.
-          headers:
-            X-Request-ID:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logResponse'
+          $ref: '#/components/responses/paymentRequired'
         '403':
-          description: The API key doesn’t have permissions to perform the request.
-          headers:
-            X-Request-ID:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logResponse'
+          $ref: '#/components/responses/forbidden'
         '413':
-          description: The maximum content size per payload is 8 MB.
-          headers:
-            X-Request-ID:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logResponse'
+          $ref: '#/components/responses/payloadTooLarge'
         '422':
-          description: The request cannot be processed.
-          headers:
-            X-Request-ID:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logResponse'
+          $ref: '#/components/responses/unprocessableEntity'
         '429':
-          description: The number of requests exceeds the rate limit.
-          headers:
-            X-Request-ID:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logResponse'
+          $ref: '#/components/responses/tooManyRequests'
         '500':
-          description: Something went wrong on LogicMonitor’s end.
-          headers:
-            X-Request-ID:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logResponse'
+          $ref: '#/components/responses/internalServerError'
 
 components:
   securitySchemes:
@@ -123,16 +59,21 @@ components:
       required: true
       schema:
         type: integer
-        enum: [2]
+        enum: [2,3]
 
   schemas:
+    epoch:
+      type: integer
+      format: int64
+      minimum: 0
+
     logEntry:
       type: object
       properties:
         message:
           type: string
         timestamp:
-          type: string
+          $ref: '#/components/schemas/epoch'
         _lm.resourceId:
           type: object
           additionalProperties:
@@ -153,4 +94,93 @@ components:
           type: boolean
         message:
           type: string
+
+  responses:
+    accepted:
+      description: The request has been accepted for processing, but the processing has not been completed
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    unauthorized:
+      description: The access token is invalid.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    paymentRequired:
+      description: The customer is not registered in the Admin App as a paying customer.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    forbidden:
+      description: No appropriate RBAC role is assigned.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    payloadTooLarge:
+      description: The payload exceeded 8MB.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    unprocessableEntity:
+      description: The payload could not be processed.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    tooManyRequests:
+      description: Too many requests.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    internalServerError:
+      description: Server error.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
 
