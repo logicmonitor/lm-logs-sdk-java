@@ -1,0 +1,211 @@
+openapi: 3.0.4
+
+info:
+  version: "1.1"
+  title: LM Logs API
+
+servers:
+  - url: https://{company}.logicmonitor.com/rest
+    variables:
+      company:
+        default: 'api'
+
+security:
+  - LMv1: []
+
+paths:
+  /log/ingest:
+    post:
+      tags:
+        - logIngest
+      description: Send custom logs to your LogicMonitor account.
+      parameters: 
+        - $ref: '#/components/parameters/version'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/logRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/accepted'
+        '207':
+          $ref: '#/components/responses/multiStatus'
+        '400':
+          $ref: '#/components/responses/badRequest'
+        '401':
+          $ref: '#/components/responses/unauthorized'
+        '402':
+          $ref: '#/components/responses/paymentRequired'
+        '403':
+          $ref: '#/components/responses/forbidden'
+        '413':
+          $ref: '#/components/responses/payloadTooLarge'
+        '429':
+          $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+
+components:
+  securitySchemes:
+    LMv1:
+      type: apiKey
+      in: header
+      name: Authorization
+
+  parameters:
+    version:
+      name: X-Version
+      in: header
+      required: true
+      schema:
+        type: integer
+        enum: [2,3]
+
+  schemas:
+    epoch:
+      type: integer
+      format: int64
+      minimum: 0
+
+    logEntry:
+      type: object
+      properties:
+        message:
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/epoch'
+        _lm.resourceId:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - message
+        - _lm.resourceId
+
+    logError:
+      type: object
+      properties:
+        error:
+          type: string
+        event:
+          $ref: '#/components/schemas/logEntry'
+
+    logRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/logEntry'
+
+    logResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/logError'
+
+  responses:
+    accepted:
+      description: The request has been accepted for processing, but the processing has not been completed
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    multiStatus:
+      description: Some events in a batch get rejected.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    badRequest:
+      description: Either bad format or request failed to begin processing in some form.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    unauthorized:
+      description: The access token is invalid.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    paymentRequired:
+      description: The customer is not registered in the Admin App as a paying customer.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    forbidden:
+      description: No appropriate RBAC role is assigned.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    payloadTooLarge:
+      description: The payload exceeded 8MB.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    tooManyRequests:
+      description: Too many requests.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+
+    internalServerError:
+      description: Server error.
+      headers:
+        X-Request-ID:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/logResponse'
+

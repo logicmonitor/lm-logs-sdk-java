@@ -1,0 +1,28 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# build files
+**/target
+target
+.gradle
+build
+
+.classpath
+.openapi-generator
+.project
+.settings
+.travis.yml
+api
+bin
+build
+build.sbt
+docs
+git_push.sh
+pom.xml
+src/generated
+src/main/AndroidManifest.xml
+
