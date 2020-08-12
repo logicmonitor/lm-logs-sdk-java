@@ -1,6 +1,7 @@
 plugins {
     id "org.openapi.generator" version "4.3.1"
     id "java-library"
+    id "signing"
     id "maven-publish"
 }
 
@@ -98,8 +99,16 @@ openApiGenerate {
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 compileJava.dependsOn tasks.openApiGenerate
+
+javadoc {
+    source = sourceSets.main.allJava
+    options.tags = [ "http.response.details:a:Http Response Details" ]
+    // doclint doesn't accept "table summary" in the generated code
+    failOnError = false
+}
 
 test {
     useJUnitPlatform()
@@ -110,11 +119,56 @@ test {
 
 jar.dependsOn tasks.test
 
+signing {
+    sign publishing.publications
+}
+
+tasks.withType(GenerateModuleMetadata) {
+    // signing Gradle Module Metadata is not supported for snapshot dependencies
+    enabled = !version.endsWith("-SNAPSHOT")
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifactId = rootProject.name
             from components.java
+            pom {
+                name = "LogicMonitor Log Ingestion Java SDK"
+                description = "Sends logs to LogicMonitor log ingestion endpoint."
+                url = "https://github.com/logicmonitor/lm-logs-sdk-java"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "pmelkowski"
+                        name = "Piotr Melkowski"
+                        email = "contractor3deepsense@logicmonitor.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/logicmonitor/lm-logs-sdk-java.git"
+                    developerConnection = "scm:git:https://github.com/logicmonitor/lm-logs-sdk-java.git"
+                    url = "https://github.com/logicmonitor/lm-logs-sdk-java"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username SONATYPE_USERNAME
+                password SONATYPE_PASSWORD
+            }
+            if (version.endsWith("-SNAPSHOT")) {
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            }
         }
     }
 }
