@@ -98,8 +98,16 @@ openApiGenerate {
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 compileJava.dependsOn tasks.openApiGenerate
+
+javadoc {
+    source = sourceSets.main.allJava
+    options.tags = [ "http.response.details:a:Http Response Details" ]
+    // doclint doesn't accept "table summary" in the generated code
+    failOnError = false
+}
 
 test {
     useJUnitPlatform()

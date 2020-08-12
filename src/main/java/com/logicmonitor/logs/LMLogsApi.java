@@ -37,8 +37,8 @@ public class LMLogsApi extends LogIngestApi {
 
     /**
      * Initializes LMLogsClient instance with the default company name.
-     * @param accessId
-     * @param accessKey
+     * @param accessId LogicMonitor access ID.
+     * @param accessKey LogicMonitor access key.
      * @throws NullPointerException if any of the parameters is null.
      */
     public LMLogsApi(String accessId, String accessKey) {
@@ -72,7 +72,8 @@ public class LMLogsApi extends LogIngestApi {
      * @return LogResponse
      * @throws ApiException if fails to make API call
      * @http.response.details
-       <table summary="Response Details" border="1">
+       <table border="1">
+         <caption>Response Details</caption>
          <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
          <tr><td> 202 </td><td> The request has been accepted for processing, but the processing has not been completed. </td><td>  * X-Request-ID -  <br>  </td></tr>
          <tr><td> 401 </td><td> TAuthentication failed. The API key provided in not valid. </td><td>  * X-Request-ID -  <br>  </td></tr>
@@ -94,7 +95,8 @@ public class LMLogsApi extends LogIngestApi {
      * @return ApiResponse&lt;LogResponse&gt;
      * @throws ApiException if fails to make API call
      * @http.response.details
-       <table summary="Response Details" border="1">
+       <table border="1">
+         <caption>Response Details</caption>
          <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
          <tr><td> 202 </td><td> The request has been accepted for processing, but the processing has not been completed. </td><td>  * X-Request-ID -  <br>  </td></tr>
          <tr><td> 401 </td><td> TAuthentication failed. The API key provided in not valid. </td><td>  * X-Request-ID -  <br>  </td></tr>
