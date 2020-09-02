@@ -18,7 +18,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.logicmonitor</groupId>
   <artifactId>lm-logs-sdk-java</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -28,7 +28,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.logicmonitor:lm-logs-sdk-java:1.0"
+compile "com.logicmonitor:lm-logs-sdk-java:1.1"
 ```
 
 ### Others
@@ -41,35 +41,44 @@ mvn clean package
 
 Then manually install the following JARs:
 
-- `target/lm-logs-sdk-java-1.0.jar`
+- `target/lm-logs-sdk-java-1.1.jar`
 - `target/lib/*.jar`
 
 ## Getting Started
 
 ```java
-
 import java.util.Arrays;
 import java.util.List;
 import com.logicmonitor.logs.LMLogsApi;
-import com.logicmonitor.logs.invoker.ApiException;
+import com.logicmonitor.logs.LMLogsApiException;
+import com.logicmonitor.logs.LMLogsApiResponse;
 import com.logicmonitor.logs.model.LogEntry;
-import com.logicmonitor.logs.model.LogResponse;
 
 public class LogIngestApiExample {
 
     public static void main(String[] args) {
-        LMLogsApi apiInstance = new LMLogsApi("your_company", "LM_access_id", "LM_token_id");
-        List<LogEntry> logEntry = Arrays.asList(); // List<LogEntry>
+        LMLogsApi apiInstance = new LMLogsApi.Builder()
+            .withCompany("your_company")
+            .withAccessId("LM_access_id")
+            .withAccessKey("LM_token_id")
+            .build();
+
+        LogEntry entry = new LogEntry()
+            .message("log_message")
+            .putLmResourceIdItem("resource_id_key", "resource_id_value");
+        List<LogEntry> logEntries = Arrays.asList(entry);
+
+        LMLogsApiResponse<?> response;
         try {
-            LogResponse result = apiInstance.logIngestPost(logEntry);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling LogIngestApi#logIngestPost");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
+            response = apiInstance.logIngestPostWithHttpInfo(logEntries);
+        } catch (LMLogsApiException e) {
             e.printStackTrace();
+            response = e.getResponse();
         }
+
+        System.out.println("Request ID: " + response.getRequestId());
+        System.out.println("Status code: " + response.getStatusCode());
+        System.out.println("Body: " + response.getData());
     }
 }
 

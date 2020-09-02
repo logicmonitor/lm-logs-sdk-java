@@ -39,7 +39,6 @@ import org.glassfish.jersey.test.TestProperties;
 import org.junit.Before;
 import org.junit.Test;
 import com.logicmonitor.auth.LMv1TokenGenerator;
-import com.logicmonitor.logs.invoker.ApiException;
 import com.logicmonitor.logs.invoker.ApiResponse;
 import com.logicmonitor.logs.invoker.ServerConfiguration;
 import com.logicmonitor.logs.model.LogEntry;
@@ -100,7 +99,10 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
             .build();
     }
 
-    private LMLogsApi api = new LMLogsApi("testCompany", TEST_ID, TEST_KEY);
+    private LMLogsApi api = new LMLogsApi.Builder()
+        .withAccessId(TEST_ID)
+        .withAccessKey(TEST_KEY)
+        .build();
 
     @Override
     protected Application configure() {
@@ -117,7 +119,7 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void testApiCall() throws ApiException {
+    public void testApiCall() throws LMLogsApiException {
         assertDoesNotThrow(() -> api.logIngestPostWithHttpInfo(List.of(new LogEntry())));
         ApiResponse<LogResponse> response = api.logIngestPostWithHttpInfo(List.of(new LogEntry()));
         assertAll(
@@ -129,12 +131,12 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void testNullEntries() throws ApiException {
-        assertThrows(ApiException.class, () -> api.logIngestPostWithHttpInfo(null));
+    public void testNullEntries() {
+        assertThrows(LMLogsApiException.class, () -> api.logIngestPostWithHttpInfo(null));
         try {
             api.logIngestPostWithHttpInfo(null);
-        } catch (ApiException e) {
-            assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getCode());
+        } catch (LMLogsApiException e) {
+            assertEquals(Status.BAD_REQUEST.getStatusCode(), e.getResponse().getStatusCode());
         }
     }
 
