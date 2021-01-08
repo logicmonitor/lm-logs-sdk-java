@@ -1,7 +1,8 @@
 # lm-logs-sdk-java(beta)
 
-Logic Monitor Log Ingestion Java SDK.
+LogicMonitor Log Ingestion Java SDK.
 
+**NOTE:** This SDK was created for use by LogicMonitor-built log integrations and is not intended to be used or supported otherwise.
 
 ## Requirements
 
