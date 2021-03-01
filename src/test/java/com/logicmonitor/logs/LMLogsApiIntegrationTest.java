@@ -50,6 +50,8 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
     protected static final String TEST_KEY = "testKey";
     protected static final Pattern AUTH_PATTERN = Pattern.compile("\\w+\\s\\w+:[^:]+:(\\d+)");
     protected static final String TEST_REQUEST_ID = "testRequestId";
+    protected static final String TEST_USER_AGENT = "Agent/0.1";
+
 
     @Path("/rest")
     public static class LogIngestResource {
@@ -60,6 +62,7 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
         public Response doPost(
                 @HeaderParam("X-Version") String version,
                 @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization,
+                @HeaderParam(HttpHeaders.USER_AGENT) String userAgent,
                 String payload) {
 
             if (version == null) {
@@ -67,6 +70,10 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
             }
             if (!LMLogsApi.API_VERSION.toString().equals(version)) {
                 return error(Status.BAD_REQUEST, "Invalid version");
+            }
+            System.out.println(userAgent);
+            if(userAgent == null){
+                return error(Status.BAD_REQUEST, "Missing user-agent");
             }
 
             if (authorization == null) {
@@ -102,6 +109,7 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
     private LMLogsApi api = new LMLogsApi.Builder()
         .withAccessId(TEST_ID)
         .withAccessKey(TEST_KEY)
+            .withUserAgentHeader(TEST_USER_AGENT)
         .build();
 
     @Override

@@ -140,6 +140,8 @@ public class LMLogsApi extends LogIngestApi {
          */
         private Boolean debugging;
 
+        private String userAgentHeader;
+
         /**
          * Configures the company.
          * @param company
@@ -200,6 +202,10 @@ public class LMLogsApi extends LogIngestApi {
             return this;
         }
 
+        public Builder withUserAgentHeader(String userAgentHeader) {
+            this.userAgentHeader = userAgentHeader;
+            return this;
+        }
         /**
          * Returns a newly-created LMLogsApi based on the contents of the builder.
          * @return new LMLogsApi instance
@@ -219,6 +225,9 @@ public class LMLogsApi extends LogIngestApi {
             }
             if (debugging != null) {
                 client.setDebugging(debugging);
+            }
+            if(userAgentHeader != null){
+                client.setUserAgent(userAgentHeader);
             }
             return api;
         }

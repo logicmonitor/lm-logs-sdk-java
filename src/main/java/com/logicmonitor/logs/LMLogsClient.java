@@ -46,6 +46,7 @@ public class LMLogsClient extends ApiClient {
      */
     protected String company;
 
+
     /**
      * Initializes LMLogsClient instance.
      * @param accessId LogicMonitor access ID.
@@ -82,6 +83,7 @@ public class LMLogsClient extends ApiClient {
         return company;
     }
 
+    public String getUserAgent(){ return super.defaultHeaderMap.get("User-Agent") ;}
     /**
      * Performs additional configuration before HTTP client is built.
      */
@@ -97,7 +99,7 @@ public class LMLogsClient extends ApiClient {
     @Override
     public String toString() {
         return "LMLogsClient [basePath=" + getBasePath() + ", debugging=" + isDebugging()
-                + ", connectTimeout=" + getConnectTimeout() + ", readTimeout=" + getReadTimeout() + "]";
+                + ", connectTimeout=" + getConnectTimeout() + ", readTimeout=" + getReadTimeout() + ", userAgent="+ getUserAgent()+"]";
     }
 
 }
