@@ -139,7 +139,9 @@ public class LMLogsApi extends LogIngestApi {
          * HTTP client debugging flag.
          */
         private Boolean debugging;
-
+        /**
+         * User-Agent header.
+         */
         private String userAgentHeader;
 
         /**
@@ -202,6 +204,11 @@ public class LMLogsApi extends LogIngestApi {
             return this;
         }
 
+        /**
+         * Configures user agent header.
+         * @param userAgentHeader
+         * @return this builder object
+         */
         public Builder withUserAgentHeader(String userAgentHeader) {
             this.userAgentHeader = userAgentHeader;
             return this;
