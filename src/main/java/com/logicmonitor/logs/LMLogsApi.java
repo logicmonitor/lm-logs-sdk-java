@@ -233,7 +233,7 @@ public class LMLogsApi extends LogIngestApi {
             if (debugging != null) {
                 client.setDebugging(debugging);
             }
-            if(userAgentHeader != null){
+            if (userAgentHeader != null) {
                 client.setUserAgent(userAgentHeader);
             }
             return api;

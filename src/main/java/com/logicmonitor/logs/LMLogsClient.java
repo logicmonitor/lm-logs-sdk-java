@@ -87,7 +87,7 @@ public class LMLogsClient extends ApiClient {
      * Gets the user-agent from the request header.
      * @return user agent header.
      */
-    public String getUserAgent(){ return super.defaultHeaderMap.get("User-Agent") ;}
+    public String getUserAgent() { return super.defaultHeaderMap.get("User-Agent"); }
 
     /**
      * Performs additional configuration before HTTP client is built.

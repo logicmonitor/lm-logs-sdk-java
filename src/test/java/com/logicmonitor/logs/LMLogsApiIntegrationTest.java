@@ -71,11 +71,9 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
             if (!LMLogsApi.API_VERSION.toString().equals(version)) {
                 return error(Status.BAD_REQUEST, "Invalid version");
             }
-            System.out.println(userAgent);
-            if(userAgent == null){
+            if (userAgent == null) {
                 return error(Status.BAD_REQUEST, "Missing user-agent");
             }
-
             if (authorization == null) {
                 return error(Status.UNAUTHORIZED, "Missing authorization");
             }
@@ -109,7 +107,7 @@ public class LMLogsApiIntegrationTest extends JerseyTest {
     private LMLogsApi api = new LMLogsApi.Builder()
         .withAccessId(TEST_ID)
         .withAccessKey(TEST_KEY)
-            .withUserAgentHeader(TEST_USER_AGENT)
+        .withUserAgentHeader(TEST_USER_AGENT)
         .build();
 
     @Override
