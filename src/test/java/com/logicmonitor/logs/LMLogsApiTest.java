@@ -34,13 +34,13 @@ public class LMLogsApiTest {
 
     @ParameterizedTest
     @CsvSource({
-        ",           0,           1,           true ",
-        "company,    ,            99999999,    false",
-        "company,    1,           ,            true ",
-        "company,    99999999,    0,                ",
+        ",           0,           1,           true ,       Agent/0.1",
+        "company,    ,            99999999,    false,       Agent/0.1",
+        "company,    1,           ,            true ,                ",
+        "company,    99999999,    0,                ,                ",
     })
     public void testBuilder(String company, Integer connectTimeout, Integer readTimeout,
-            Boolean debugging) {
+            Boolean debugging, String userAgentHeader) {
         LMLogsApi api = new LMLogsApi.Builder()
             .withAccessId("id")
             .withAccessKey("key")
@@ -48,6 +48,7 @@ public class LMLogsApiTest {
             .withConnectTimeout(connectTimeout)
             .withReadTimeout(readTimeout)
             .withDebugging(debugging)
+            .withUserAgentHeader(userAgentHeader)
             .build();
         LMLogsClient client = api.getApiClient();
 
@@ -57,7 +58,8 @@ public class LMLogsApiTest {
                     client.getConnectTimeout()),
             () -> assertEquals(readTimeout != null ? readTimeout : LMLogsClient.DEFAULT_TIMEOUT,
                     client.getReadTimeout()),
-            () -> assertEquals(debugging != null ? debugging : false, client.isDebugging())
+            () -> assertEquals(debugging != null ? debugging : false, client.isDebugging()),
+            () -> assertEquals(userAgentHeader != null ? userAgentHeader : "lm-logs-sdk-java/1.2", client.getUserAgent())
         );
     }
 

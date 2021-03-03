@@ -19,7 +19,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.logicmonitor</groupId>
   <artifactId>lm-logs-sdk-java</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <scope>compile</scope>
 </dependency>
 ```
@@ -29,7 +29,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.logicmonitor:lm-logs-sdk-java:1.1"
+compile "com.logicmonitor:lm-logs-sdk-java:1.2"
 ```
 
 ### Others
@@ -42,7 +42,7 @@ mvn clean package
 
 Then manually install the following JARs:
 
-- `target/lm-logs-sdk-java-1.1.jar`
+- `target/lm-logs-sdk-java-1.2.jar`
 - `target/lib/*.jar`
 
 ## Getting Started
@@ -62,6 +62,7 @@ public class LogIngestApiExample {
             .withCompany("your_company")
             .withAccessId("LM_access_id")
             .withAccessKey("LM_token_id")
+            .withUserAgentHeader("<platform>/<version>")
             .build();
 
         LogEntry entry = new LogEntry()

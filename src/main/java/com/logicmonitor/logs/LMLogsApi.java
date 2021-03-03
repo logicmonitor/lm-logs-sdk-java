@@ -139,6 +139,10 @@ public class LMLogsApi extends LogIngestApi {
          * HTTP client debugging flag.
          */
         private Boolean debugging;
+        /**
+         * User-Agent header.
+         */
+        private String userAgentHeader;
 
         /**
          * Configures the company.
@@ -201,6 +205,15 @@ public class LMLogsApi extends LogIngestApi {
         }
 
         /**
+         * Configures user agent header.
+         * @param userAgentHeader
+         * @return this builder object
+         */
+        public Builder withUserAgentHeader(String userAgentHeader) {
+            this.userAgentHeader = userAgentHeader;
+            return this;
+        }
+        /**
          * Returns a newly-created LMLogsApi based on the contents of the builder.
          * @return new LMLogsApi instance
          * @throws NullPointerException if accessId or accessKey is null.
@@ -219,6 +232,9 @@ public class LMLogsApi extends LogIngestApi {
             }
             if (debugging != null) {
                 client.setDebugging(debugging);
+            }
+            if (userAgentHeader != null) {
+                client.setUserAgent(userAgentHeader);
             }
             return api;
         }
